@@ -1,2 +1,3 @@
 # cs81
-# cs81
+
+Prolog homeworks from wsl:ubuntu
