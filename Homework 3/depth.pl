@@ -1,4 +1,4 @@
-%% Author(s):
+%% Author(s): Alex Bishka
 %%
 %% CS 81 HW 3, Problem 7
 
@@ -20,5 +20,5 @@ depth(E, [E, _, _], 0).
 % YOU DO %
 %%%%%%%%%%
 
-depth(E, [Root, Left, _], N) :- \+E = Root, depth(E, [E, Left, _], P), N is P + 1.
-depth(E, [Root, _, Right], N) :- \+E = Root, depth(E, [E, _, Right], P), N is P + 1.
+depth(E, [Root, Left, _], N) :- \+E = Root, depth(E, Left, P), N is P + 1.
+depth(E, [Root, _, Right], N) :- \+E = Root, depth(E, Right, P), N is P + 1.

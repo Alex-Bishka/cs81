@@ -1,4 +1,4 @@
-%% Author(s):
+%% Author(s): Alex Bishka
 %%
 %% CS 81 HW 3, Problem 6
 
