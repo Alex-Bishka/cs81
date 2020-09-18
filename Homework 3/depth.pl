@@ -19,6 +19,12 @@ depth(E, [E, _, _], 0).
 %%%%%%%%%%
 % YOU DO %
 %%%%%%%%%%
+% everytime we go left or right (so each recursive call) we add
+% one to our depth counter
+% we also need to make sure that our root is updated as we
+% go through the tree
 
+% this is the case where we recurse left on the tree
 depth(E, [Root, Left, _], N) :- \+E = Root, depth(E, Left, P), N is P + 1.
+% this is the case where we recures right on the tree
 depth(E, [Root, _, Right], N) :- \+E = Root, depth(E, Right, P), N is P + 1.

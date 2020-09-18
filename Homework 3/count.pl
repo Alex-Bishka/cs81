@@ -23,5 +23,12 @@ count(_, [], 0). % The empty list contains no occurrences of X
 % YOU DO %
 %%%%%%%%%%
 %
+% add one to our counter everytime we see the same word
+
+% this is our case where the first word in the list is the same
+% as the word we are counting
 count(X, [X | Rest], N) :- count(X, Rest, P), N is P + 1.
+
+% this is the case where the first word in the list is not the same
+% as the word we are counting
 count(X, [Y | Rest], N) :- count(X, Rest, N), \+X = Y.
