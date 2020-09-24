@@ -19,7 +19,7 @@ insert(E, [], [E, [], []]).
 %   Trees are represented as [Root, Left, Right].
 %   Insertion must preserve binary search tree property.
 %
-% What our "function" looks like:
+% What our predicate looks like:
 %   insert(insertion_value, tree, new_tree)
 %
 % Need to run:
