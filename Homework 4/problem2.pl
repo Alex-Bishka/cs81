@@ -1,8 +1,8 @@
 %% CS 81, Logic and Computability
 %% Homework 4, Problem 2
 %% Graphs!
-%% YOUR NAME HERE
-%% DATE HERE
+%% Alex Bishka
+%% 9/23/2020
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% BASE CASE - STARTER CODE

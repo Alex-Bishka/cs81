@@ -1,8 +1,8 @@
 %% CS 81, Logic and Computability
 %% Homework 4, Problem 4
 %% Fox, hare, lettuce, man
-%% YOUR NAME
-%% DATE
+%% Alex Bishka
+%% 9/23/2020
 
 %% A configuration comprises a list of two lists in which
 %% the first list in the pair consists of the items on the left bank
