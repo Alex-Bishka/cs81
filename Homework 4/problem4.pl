@@ -18,6 +18,31 @@
 initial([[man, fox, hare, lettuce], []]).
 final([[], [man, fox, hare, lettuce]]).
 
+% precedes is a helper for our sorted function, replacing less than operator
+precedes(man, _).
+precedes(fox, hare).
+precedes(fox, lettuce).
+precedes(hare, lettuce).
+
+% no repeats - helper for sorted
+occursOnce(X, [X | R]) :- \+ member(X, R).
+occursOnce(X, [F | R]) :- occursOnce(X, R), \+ X = F.
+
+% sorted makes sure the order of our elements is correct
+sorted([]).
+sorted([_]).
+sorted([D1, D2 | R]) :- occursOnce(D1, [D2, R]), memberprecedes(D1, D2), sorted([D2 | R]).
+
+% our banks are not going to eat each other
+safe([]).
+safe([_]).
+safe([man | Rest]).
+safe([fox, lettuce]).
+
+% removeOne - checks to make sure our banks are the same after we move an animal over
+removeOne(A, [A | X], X).
+removeOne(B, [A | X], [A | Y]) :- removeOne(B, X, Y).
+
 %% The solve predicate simply retracts all previous marked assertions
 %% and calls cross to solve the puzzle.
 
@@ -25,7 +50,11 @@ solve(Configuration, X) :- retractall(marked(X)), cross(Configuration, X).
 
 cross(Configuration, []) :- final(Configuration).
 
-cross(Configuration, ListOfMoves) :- fail. %% <---Interesting code goes here, after you remove the `fail.'
+cross(Configuration, [Move | Rest]) :- 
+    \+ marked(Configuration),
+    assert(marked(Configuration)),
+    valid(Configuration, Move, NewConfiguration),
+    cross(NewConfiguration, Rest).
 
 %% The possible moves must be named:
 %% man_goes_right (Man goes from the left bank TO the right bank by himself
@@ -43,4 +72,18 @@ cross(Configuration, ListOfMoves) :- fail. %% <---Interesting code goes here, af
 %% [LEFT1, RIGHT1] before the move.  Then, upon making the move man_goes_right
 %% the left and right banks look like [LEFT2, RIGHT2]
 
-valid([LEFT1, RIGHT1], man_goes_right, [LEFT2, RIGHT2]) :- fail.
+valid([[man | LEFT1], RIGHT1], man_goes_right, [LEFT1, [man | RIGHT1]]) :- sorted(LEFT1), sorted([man | RIGHT1]).
+
+valid([LEFT1, RIGHT1], man_goes_left, [LEFT2, RIGHT2]) :- fail.
+
+valid([LEFT1, RIGHT1], man_takes_fox_right, [LEFT2, RIGHT2]) :- fail.
+
+valid([LEFT1, RIGHT1], man_takes_fox_left [LEFT2, RIGHT2]) :- fail.
+
+valid([LEFT1, RIGHT1], man_takes_hare_right [LEFT2, RIGHT2]) :- fail.
+
+valid([LEFT1, RIGHT1], man_takes_hare_left [LEFT2, RIGHT2]) :- fail.
+
+valid([LEFT1, RIGHT1], man_takes_lettuce_right, [LEFT2, RIGHT2]) :- fail.
+
+valid([LEFT1, RIGHT1], man_takes_lettuce_left [LEFT2, RIGHT2]) :- fail.
