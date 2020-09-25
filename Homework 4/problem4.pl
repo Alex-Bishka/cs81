@@ -31,7 +31,7 @@ occursOnce(X, [F | R]) :- occursOnce(X, R), \+ X = F.
 % sorted makes sure the order of our elements is correct
 sorted([]).
 sorted([_]).
-sorted([D1, D2 | R]) :- occursOnce(D1, [D2, R]), memberprecedes(D1, D2), sorted([D2 | R]).
+sorted([D1, D2 | R]) :- occursOnce(D1, [D2, R]), precedes(D1, D2), sorted([D2 | R]).
 
 % our banks are not going to eat each other
 safe([]).
@@ -40,6 +40,7 @@ safe([man | Rest]).
 safe([fox, lettuce]).
 
 % removeOne - checks to make sure our banks are the same after we move an animal over
+% removes an element from the first list and produces a second list without that element
 removeOne(A, [A | X], X).
 removeOne(B, [A | X], [A | Y]) :- removeOne(B, X, Y).
 
@@ -72,18 +73,54 @@ cross(Configuration, [Move | Rest]) :-
 %% [LEFT1, RIGHT1] before the move.  Then, upon making the move man_goes_right
 %% the left and right banks look like [LEFT2, RIGHT2]
 
-valid([[man | LEFT1], RIGHT1], man_goes_right, [LEFT1, [man | RIGHT1]]) :- sorted(LEFT1), sorted([man | RIGHT1]).
+valid([[man | LEFT1], RIGHT1], man_goes_right, [LEFT1, [man | RIGHT1]]) :- 
+    sorted(LEFT1), 
+    sorted([man | RIGHT1]), 
+    safe(LEFT1), 
+    safe([man | RIGHT1]).
 
-valid([LEFT1, RIGHT1], man_goes_left, [LEFT2, RIGHT2]) :- fail.
+valid([LEFT1, [man | RIGHT1]], man_goes_left, [[man | LEFT1], RIGHT1]) :- 
+    sorted([man | LEFT1]),
+    sorted(RIGHT1),
+    safe([man | LEFT1]),
+    safe([RIGHT1]).
 
-valid([LEFT1, RIGHT1], man_takes_fox_right, [LEFT2, RIGHT2]) :- fail.
+valid([[man | fox | LEFT1], RIGHT1], man_takes_fox_right, [LEFT1, [man | fox | RIGHT1]]) :- 
+    sorted(LEFT1), 
+    sorted([man | fox | RIGHT1]), 
+    removeOne(fox, [fox | LEFT1], LEFT1).
+    removeOne(fox, [fox | RIGHT1], RIGHT1).
+    safe(LEFT1), 
+    safe([man | fox | RIGHT1]).
 
-valid([LEFT1, RIGHT1], man_takes_fox_left [LEFT2, RIGHT2]) :- fail.
+valid([LEFT1, [man | fox | RIGHT1]], man_takes_fox_left [[man | fox | LEFT1], RIGHT1]) :-
+    sorted([man | fox | LEFT1]),
+    sorted(RIGHT1),
+    removeOne(fox, [fox | RIGHT1], RIGHT1),
+    removeOne(fox, [fox | LEFT1], LEFT1),
+    safe([man | fox | LEFT1]),
+    safe([RIGHT1]).
 
 valid([LEFT1, RIGHT1], man_takes_hare_right [LEFT2, RIGHT2]) :- fail.
 
 valid([LEFT1, RIGHT1], man_takes_hare_left [LEFT2, RIGHT2]) :- fail.
 
-valid([LEFT1, RIGHT1], man_takes_lettuce_right, [LEFT2, RIGHT2]) :- fail.
+valid([[man | LEFT1], RIGHT1], man_takes_lettuce_right, [LEFT2, [man | RIGHT2]]) :- 
+    last(LEFT1, lettuce),
+    last(RIGHT2, lettuce),
+    sorted(LEFT2), 
+    sorted([man | RIGHT2]), 
+    removeOne(lettuce, LEFT1, LEFT2).
+    removeOne(lettuce, RIGHT2, RIGHT1).
+    safe(LEFT2), 
+    safe([man | RIGHT2]).
 
-valid([LEFT1, RIGHT1], man_takes_lettuce_left [LEFT2, RIGHT2]) :- fail.
+valid([LEFT1, [man | RIGHT1]], man_takes_lettuce_left [[man | LEFT2], RIGHT2]) :- 
+    last(RIGHT1, lettuce),
+    last(LEFT2, lettuce),
+    sorted([man | LEFT2]),
+    sorted(RIGHT2),
+    removeOne(lettuce, RIGHT1, RIGHT2),
+    removeOne(lettuce, LEFT2, LEFT1),
+    safe([man | LEFT2]),
+    safe([RIGHT2]).
