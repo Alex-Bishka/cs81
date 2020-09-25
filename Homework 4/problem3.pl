@@ -28,10 +28,30 @@ permutation(L, [F | R]) :-
 %% tree(Operations, List, Tree) is true iff Tree can be constructed
 %% from Operations in the internal nodes (with repetition) and the 
 %% elements of List as the leaves with no repetition and from left to right 
+% 
+% operations is a list of mathematical operations (can repeat)
+% list is a list of our numbers (can not repeat)
+%
+% To test/run:
+%   [problem3].
+%   tree([+, *], [4, 4, 4, 4], X).
+%
 
 tree(Operations, [X], X).
 
-tree(Operations, List, Tree) :- fail. %%Replace 'fail.' with your code.
+tree(Operations, List, Tree) :- [Root | Rest] = Operations, [Root, Left, Right] = Tree, [X | NewList] = List, tree(Operations, NewList, Result), append(Left, [X], Result), append(Right, [X], Result).
+/**
+1) how do we use operations to create a tree?
+    - probably something like NewTree is [first, Left, Right]
+    - where first is the first element of operations
+    - Left is tree(Operations, Rest, Left)
+    - Right is tree(Operations, Rest, Right)
+2) how do we append to the leafs of the tree?
+    - want to append after recursive calls?
+    - append([X], [Right], NewRight)
+    - append([X], [Left], NewRight)
+    - where X is the first item in List 
+*/
 
 %% eval(Tree, Value) is true if the arithmetic Tree evaluates to the given Value.
 %% We've provided the base case.  You'll need to write the recursive cases.
