@@ -39,19 +39,13 @@ permutation(L, [F | R]) :-
 
 tree(Operations, [X], X).
 
-tree(Operations, List, Tree) :- [Root | Rest] = Operations, [Root, Left, Right] = Tree, [X | NewList] = List, tree(Operations, NewList, Result), append(Left, [X], Result), append(Right, [X], Result).
-/**
-1) how do we use operations to create a tree?
-    - probably something like NewTree is [first, Left, Right]
-    - where first is the first element of operations
-    - Left is tree(Operations, Rest, Left)
-    - Right is tree(Operations, Rest, Right)
-2) how do we append to the leafs of the tree?
-    - want to append after recursive calls?
-    - append([X], [Right], NewRight)
-    - append([X], [Left], NewRight)
-    - where X is the first item in List 
-*/
+tree(Operations, List, [Root, Left, Right]) :- 
+    member(Root, Operations), 
+    append(LeftList, RightList, List),
+    \+ LeftList = [],
+    \+ RightList = [],
+    tree(Operations, LeftList, Left), 
+    tree(Operations, RightList, Right).
 
 %% eval(Tree, Value) is true if the arithmetic Tree evaluates to the given Value.
 %% We've provided the base case.  You'll need to write the recursive cases.
@@ -59,3 +53,12 @@ tree(Operations, List, Tree) :- [Root | Rest] = Operations, [Root, Left, Right] 
 %% Base case.  This checks if R is a number.
     
 eval(R, R) :- number(R).
+
+% recursive cases (may need to do operate slash)
+eval([*, Left, Right], Value) :- eval(Left, L), eval(Right, R), Value is L * R.
+
+eval([/, Left, Right], Value) :- eval(Left, L), eval(Right, R), Value is L / R.
+
+eval([+, Left, Right], Value) :- eval(Left, L), eval(Right, R), Value is L + R.
+
+eval([-, Left, Right], Value) :- eval(Left, L), eval(Right, R), Value is L - R.
