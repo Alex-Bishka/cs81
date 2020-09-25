@@ -57,7 +57,7 @@ eval(R, R) :- number(R).
 % recursive cases (may need to do operate slash)
 eval([*, Left, Right], Value) :- eval(Left, L), eval(Right, R), Value is L * R.
 
-eval([/, Left, Right], Value) :- eval(Left, L), eval(Right, R), Value is L / R.
+eval([/, Left, Right], Value) :- eval(Left, L), eval(Right, R), \+ R is 0, Value is L / R.
 
 eval([+, Left, Right], Value) :- eval(Left, L), eval(Right, R), Value is L + R.
 
