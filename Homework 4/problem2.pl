@@ -36,4 +36,8 @@ path(X, X, _, [X], K) :- K >= 0.
 % graph(G), path(a, z, G, P, 8).
 % graph(G), path(a, z, G, P, 10).
 %%%%%%%%%%%%%
-path(X, Y, Graph, [X | Rest], Budget) :- member([X, NewStart, Weight], Graph), NewWeight is Budget - Weight, \+ Weight > Budget, path(NewStart, Y, Graph, Rest, NewWeight).
+path(X, Y, Graph, [X | Rest], Budget) :- 
+    member([X, NewStart, Weight], Graph), 
+    NewWeight is Budget - Weight, 
+    \+ Weight > Budget, 
+    path(NewStart, Y, Graph, Rest, NewWeight).
