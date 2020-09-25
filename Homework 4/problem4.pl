@@ -28,7 +28,7 @@ precedes(hare, lettuce).
 occursOnce(X, [X | R]) :- \+ member(X, R).
 occursOnce(X, [F | R]) :- occursOnce(X, R), \+ X = F.
 
-% sorted makes sure the order of our elements is correct
+% sorted determines if a list is sorted
 sorted([]).
 sorted([_]).
 sorted([D1, D2 | R]) :- occursOnce(D1, [D2, R]), precedes(D1, D2), sorted([D2 | R]).
@@ -101,26 +101,51 @@ valid([LEFT1, [man | fox | RIGHT1]], man_takes_fox_left [[man | fox | LEFT1], RI
     safe([man | fox | LEFT1]),
     safe([RIGHT1]).
 
-valid([LEFT1, RIGHT1], man_takes_hare_right [LEFT2, RIGHT2]) :- fail.
+valid([[man | LEFT1], RIGHT1], man_takes_hare_right [LEFT2, [man | RIGHT2]]) :-
+    member(hare, LEFT1),
+    member(hare, RIGHT2),
+    sorted([man | LEFT1]),
+    sorted(RIGHT1),
+    sorted(LEFT2),
+    sorted([man | RIGHT2]),
+    removeOne(hare, LEFT1, LEFT2),
+    removeOne(hare, RIGHT2, RIGHT1),
+    safe(RIGHT1),
+    safe(LEFT2).
 
-valid([LEFT1, RIGHT1], man_takes_hare_left [LEFT2, RIGHT2]) :- fail.
+valid([LEFT1, [man | RIGHT1]], man_takes_hare_left [[man | LEFT2], RIGHT2]) :- fail.
+    member(hare, RIGHT1),
+    member(hare, LEFT2),
+    sorted(LEFT1),
+    sorted([man | RIGHT1]),
+    sorted([man | LEFT2]),
+    sorted(RIGHT2),
+    removeOne(hare, RIGHT1, RIGHT2),
+    removeOne(hare, LEFT2, LEFT1),
+    safe(LEFT1),
+    safe(RIGHT2).
 
+% do I need to check if inputs are sorted for lettuce cases?
 valid([[man | LEFT1], RIGHT1], man_takes_lettuce_right, [LEFT2, [man | RIGHT2]]) :- 
     last(LEFT1, lettuce),
     last(RIGHT2, lettuce),
+    sorted([man | LEFT1]),
+    sorted(RIGHT1),
     sorted(LEFT2), 
     sorted([man | RIGHT2]), 
     removeOne(lettuce, LEFT1, LEFT2).
     removeOne(lettuce, RIGHT2, RIGHT1).
-    safe(LEFT2), 
-    safe([man | RIGHT2]).
+    safe(RIGHT1)
+    safe(LEFT2).
 
 valid([LEFT1, [man | RIGHT1]], man_takes_lettuce_left [[man | LEFT2], RIGHT2]) :- 
     last(RIGHT1, lettuce),
     last(LEFT2, lettuce),
+    sorted([man | RIGHT1]),
+    sorted(LEFT1),
     sorted([man | LEFT2]),
     sorted(RIGHT2),
     removeOne(lettuce, RIGHT1, RIGHT2),
     removeOne(lettuce, LEFT2, LEFT1),
-    safe([man | LEFT2]),
-    safe([RIGHT2]).
+    safe(LEFT1),
+    safe(RIGHT2).
