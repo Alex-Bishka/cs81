@@ -13,6 +13,7 @@
 %
 % should pass:
 % accepts(q0, [[0, 0, 1], [1, 1, 0], [0, 1, 1], [1, 0, 1]]).
+% should fail:
 % accepts(q0, [[0, 0, 1], [1, 0, 0]]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -22,25 +23,25 @@
 accepting(q0).
 
 %% Define transitions here.
-% from accepting (q0) to either carry or error state
+% from accepting (q0) to either accepting, carry, or error state
 transition(q0, [0, 0, 0], q0).
 transition(q0, [0, 1, 1], q0).
 transition(q0, [1, 0, 1], q0).
-transition(q0, [1, 1, 0], q1).
-transition(q0, [0, 0, 1], q2).
-transition(q0, [0, 1, 0], q2).
-transition(q0, [1, 0, 0], q2).
+transition(q0, [1, 1, 0], q2).
+transition(q0, [0, 0, 1], q1).
+transition(q0, [0, 1, 0], q1).
+transition(q0, [1, 0, 0], q1).
 transition(q0, [1, 1, 1], q2).
 
-% from carry (q1) to either accepting or error state
+% from carry (q1) to either accepting, carry, or error state
 transition(q1, [0, 0, 0], q2).
 transition(q1, [0, 1, 1], q2).
 transition(q1, [1, 0, 1], q2).
-transition(q1, [1, 1, 0], q2).
-transition(q1, [0, 0, 1], q0).
+transition(q1, [1, 1, 0], q0).
+transition(q1, [0, 0, 1], q2).
 transition(q1, [0, 1, 0], q1).
 transition(q1, [1, 0, 0], q1).
-transition(q1, [1, 1, 1], q1).
+transition(q1, [1, 1, 1], q0).
 
 % error state (q2) always in error state
 transition(q2, [0, 0, 0], q2).
