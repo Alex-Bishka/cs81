@@ -10,6 +10,18 @@
 %% man is considered to be an item.  The lists will be kept in sorted
 %% order such that man precedes fox precedes hare precedes lettuce.
 
+/*
+To run:
+?- initial(C), solve(C, X).
+C = [[man, fox, hare, lettuce], []], 
+X = [man_takes_hare_right, man_goes_left, man_takes_fox_right,man_takes_hare_left, man_takes_lettuce_right, man_goes_left, man_takes_hare_right]
+
+solve([[man, fox, hare, lettuce], []], [man_takes_hare_right, man_goes_left, man_takes_fox_right,man_takes_hare_left, man_takes_lettuce_right, man_goes_left, man_takes_hare_right]).
+
+To debug:
+solve([[man, hare], [fox, lettuce]], [man_takes_hare_right]). this fails...
+*/
+
 %% The initial configuration, therefore, is:
 %% [ [man, fox, hare, lettuce], [] ]
 
@@ -52,6 +64,7 @@ solve(Configuration, X) :- retractall(marked(X)), cross(Configuration, X).
 cross(Configuration, []) :- final(Configuration).
 
 cross(Configuration, [Move | Rest]) :- 
+    print("test"),
     \+ marked(Configuration),
     assert(marked(Configuration)),
     valid(Configuration, Move, NewConfiguration),
@@ -74,46 +87,56 @@ cross(Configuration, [Move | Rest]) :-
 %% the left and right banks look like [LEFT2, RIGHT2]
 
 valid([[man | LEFT1], RIGHT1], man_goes_right, [LEFT1, [man | RIGHT1]]) :- 
+    print("test"),
     sorted(LEFT1), 
     sorted([man | RIGHT1]), 
     safe(LEFT1), 
     safe([man | RIGHT1]).
 
 valid([LEFT1, [man | RIGHT1]], man_goes_left, [[man | LEFT1], RIGHT1]) :- 
+    print("test"),
     sorted([man | LEFT1]),
     sorted(RIGHT1),
     safe([man | LEFT1]),
     safe([RIGHT1]).
 
-valid([[man | fox | LEFT1], RIGHT1], man_takes_fox_right, [LEFT1, [man | fox | RIGHT1]]) :- 
+valid([[man | [fox | LEFT1]], RIGHT1], man_takes_fox_right, [LEFT1, [man | [fox | RIGHT1]]]) :- 
+    print("test"),
     sorted(LEFT1), 
-    sorted([man | fox | RIGHT1]), 
-    removeOne(fox, [fox | LEFT1], LEFT1).
-    removeOne(fox, [fox | RIGHT1], RIGHT1).
+    sorted([man | [fox | RIGHT1]]), 
+    removeOne(fox, [fox | LEFT1], LEFT1),
+    removeOne(fox, [fox | RIGHT1], RIGHT1),
     safe(LEFT1), 
-    safe([man | fox | RIGHT1]).
+    safe([man | [fox | RIGHT1]]).
 
-valid([LEFT1, [man | fox | RIGHT1]], man_takes_fox_left [[man | fox | LEFT1], RIGHT1]) :-
-    sorted([man | fox | LEFT1]),
+valid([LEFT1, [man | [fox | RIGHT1]]], man_takes_fox_left, [[man | [fox | LEFT1]], RIGHT1]) :-
+    print("test"),
+    sorted([man | [fox | LEFT1]]),
     sorted(RIGHT1),
     removeOne(fox, [fox | RIGHT1], RIGHT1),
     removeOne(fox, [fox | LEFT1], LEFT1),
-    safe([man | fox | LEFT1]),
+    safe([man | [fox | LEFT1]]),
     safe([RIGHT1]).
 
-valid([[man | LEFT1], RIGHT1], man_takes_hare_right [LEFT2, [man | RIGHT2]]) :-
+valid([[man | LEFT1], RIGHT1], man_takes_hare_right, [LEFT2, [man | RIGHT2]]) :-
+    print("entered valid hare right"),
     member(hare, LEFT1),
     member(hare, RIGHT2),
+    print("checked if hare was a member"),
     sorted([man | LEFT1]),
     sorted(RIGHT1),
     sorted(LEFT2),
     sorted([man | RIGHT2]),
+    print("is hare sorted?"),
     removeOne(hare, LEFT1, LEFT2),
     removeOne(hare, RIGHT2, RIGHT1),
+    print("lists are updated!"),
     safe(RIGHT1),
-    safe(LEFT2).
+    safe(LEFT2),
+    print("better be safe").
 
-valid([LEFT1, [man | RIGHT1]], man_takes_hare_left [[man | LEFT2], RIGHT2]) :- fail.
+valid([LEFT1, [man | RIGHT1]], man_takes_hare_left, [[man | LEFT2], RIGHT2]) :-
+    print("entered valid hare left"),
     member(hare, RIGHT1),
     member(hare, LEFT2),
     sorted(LEFT1),
@@ -133,12 +156,13 @@ valid([[man | LEFT1], RIGHT1], man_takes_lettuce_right, [LEFT2, [man | RIGHT2]])
     sorted(RIGHT1),
     sorted(LEFT2), 
     sorted([man | RIGHT2]), 
-    removeOne(lettuce, LEFT1, LEFT2).
-    removeOne(lettuce, RIGHT2, RIGHT1).
-    safe(RIGHT1)
+    removeOne(lettuce, LEFT1, LEFT2),
+    removeOne(lettuce, RIGHT2, RIGHT1),
+    safe(RIGHT1),
     safe(LEFT2).
 
-valid([LEFT1, [man | RIGHT1]], man_takes_lettuce_left [[man | LEFT2], RIGHT2]) :- 
+valid([LEFT1, [man | RIGHT1]], man_takes_lettuce_left, [[man | LEFT2], RIGHT2]) :- 
+    print("test"),
     last(RIGHT1, lettuce),
     last(LEFT2, lettuce),
     sorted([man | RIGHT1]),
