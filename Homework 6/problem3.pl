@@ -17,6 +17,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Define accepting state(s) here.
+accepting(q0).
 accepting(q1).
 accepting(q2).
 
